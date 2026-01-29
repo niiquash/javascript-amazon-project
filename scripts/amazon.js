@@ -1,3 +1,6 @@
+import { cart } from "../data/cart.js";
+import { products } from "../data/products.js";
+
 let productsHTML = "";
 
 products.forEach((product) => {
@@ -25,7 +28,7 @@ products.forEach((product) => {
       <div class="product-price">$${(product.priceCents / 100).toFixed(2)}</div>
 
       <div class="product-quantity-container">
-        <select>
+        <select class="js-quantity-selector-${product.id}">
           <option selected value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -41,7 +44,7 @@ products.forEach((product) => {
 
       <div class="product-spacer"></div>
 
-      <div class="added-to-cart">
+      <div class="added-to-cart js-added-to-cart-${product.id}">
         <img src="images/icons/checkmark.png" />
         Added
       </div>
@@ -54,27 +57,52 @@ products.forEach((product) => {
 });
 
 document.querySelector(".js-products-grid").innerHTML = productsHTML;
+let messageTimeout;
+
+const displayMessage = (productId) => {
+  const addedNotification = document.querySelector(
+    `.js-added-to-cart-${productId}`,
+  );
+
+  addedNotification.style.opacity = "1";
+
+  clearTimeout(messageTimeout);
+
+  messageTimeout = setTimeout(() => {
+    addedNotification.style.opacity = "0";
+  }, 2000);
+};
+
+const updateItemQuantity = (productId) => {
+  const selectElement = document.querySelector(
+    `.js-quantity-selector-${productId}`,
+  );
+
+  let matchingItem;
+
+  cart.forEach((item) => {
+    if (productId === item.productId) {
+      matchingItem = item;
+    }
+  });
+
+  if (matchingItem) {
+    matchingItem.quantity += Number(selectElement.value);
+  } else {
+    cart.push({
+      productId: productId,
+      quantity: Number(selectElement.value),
+    });
+  }
+};
 
 document.querySelectorAll(".js-add-to-cart").forEach((button) => {
   button.addEventListener("click", () => {
     const productId = button.dataset.productId;
 
-    let matchingItem;
+    updateItemQuantity(productId);
 
-    cart.forEach((item) => {
-      if (productId === item.productId) {
-        matchingItem = item;
-      }
-    });
-
-    if (matchingItem) {
-      matchingItem.quantity += 1;
-    } else {
-      cart.push({
-        productId: productId,
-        quantity: 1,
-      });
-    }
+    displayMessage(productId);
 
     let cartQuantity = 0;
 
