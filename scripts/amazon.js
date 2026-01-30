@@ -1,7 +1,15 @@
 import { cart, updateCart } from "../data/cart.js";
 import { products } from "../data/products.js";
 
+let cartQuantity = 0;
+
+cart.forEach((item) => {
+  cartQuantity += item.quantity;
+});
+
 let productsHTML = "";
+
+document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
 
 products.forEach((product) => {
   productsHTML += `
