@@ -48,3 +48,18 @@ export function removeFromCart(productId) {
 
   saveToStorage();
 }
+
+export function updateQuantity(productId, newQuantity) {
+  let matchingItem;
+  cart.forEach((item) => {
+    if (productId === item.productId) {
+      matchingItem = item;
+    }
+  });
+
+  if (matchingItem) {
+    console.log(`quantity value: ${newQuantity.value}`);
+    matchingItem.quantity = Number(newQuantity.value);
+  }
+  saveToStorage();
+}
