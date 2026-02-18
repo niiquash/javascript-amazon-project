@@ -1,3 +1,5 @@
+import { getProduct } from "./products.js";
+
 export let cart = JSON.parse(localStorage.getItem("cart")) || [
   {
     productId: "e43638ce-6aa0-4b85-b27f-e1d07eb678c6",
@@ -16,13 +18,7 @@ export const updateCart = (productId) => {
     `.js-quantity-selector-${productId}`,
   );
 
-  let matchingItem;
-
-  cart.forEach((item) => {
-    if (productId === item.productId) {
-      matchingItem = item;
-    }
-  });
+  const matchingItem = getProduct(productId);
 
   if (matchingItem) {
     matchingItem.quantity += Number(selectElement.value);
@@ -53,12 +49,7 @@ export function removeFromCart(productId) {
 }
 
 export function updateQuantity(productId, newQuantity) {
-  let matchingItem;
-  cart.forEach((item) => {
-    if (productId === item.productId) {
-      matchingItem = item;
-    }
-  });
+  const matchingItem = getProduct(productId);
 
   if (matchingItem) {
     console.log(`quantity value: ${newQuantity.value}`);
