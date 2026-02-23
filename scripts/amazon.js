@@ -1,5 +1,5 @@
 import { cart, updateCart } from "../data/cart.js";
-import { products } from "../data/products.js";
+import { products, loadProducts } from "../data/products.js";
 
 let cartQuantity = 0;
 
@@ -7,12 +7,15 @@ cart.forEach((item) => {
   cartQuantity += item.quantity;
 });
 
-let productsHTML = "";
-
 document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
 
-products.forEach((product) => {
-  productsHTML += `
+loadProducts(renderProductsGrid);
+
+function renderProductsGrid() {
+  let productsHTML = "";
+
+  products.forEach((product) => {
+    productsHTML += `
     <div class="product-container">
       <div class="product-image-container">
         <img
@@ -64,39 +67,40 @@ products.forEach((product) => {
       </button>
     </div>
   `;
-});
-
-document.querySelector(".js-products-grid").innerHTML = productsHTML;
-let messageTimeout;
-
-const displayMessage = (productId) => {
-  const addedNotification = document.querySelector(
-    `.js-added-to-cart-${productId}`,
-  );
-
-  addedNotification.style.opacity = "1";
-
-  clearTimeout(messageTimeout);
-
-  messageTimeout = setTimeout(() => {
-    addedNotification.style.opacity = "0";
-  }, 2000);
-};
-
-document.querySelectorAll(".js-add-to-cart").forEach((button) => {
-  button.addEventListener("click", () => {
-    const productId = button.dataset.productId;
-
-    updateCart(productId);
-
-    displayMessage(productId);
-
-    let cartQuantity = 0;
-
-    cart.forEach((item) => {
-      cartQuantity += item.quantity;
-    });
-
-    document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
   });
-});
+
+  document.querySelector(".js-products-grid").innerHTML = productsHTML;
+  let messageTimeout;
+
+  const displayMessage = (productId) => {
+    const addedNotification = document.querySelector(
+      `.js-added-to-cart-${productId}`,
+    );
+
+    addedNotification.style.opacity = "1";
+
+    clearTimeout(messageTimeout);
+
+    messageTimeout = setTimeout(() => {
+      addedNotification.style.opacity = "0";
+    }, 2000);
+  };
+
+  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+    button.addEventListener("click", () => {
+      const productId = button.dataset.productId;
+
+      updateCart(productId);
+
+      displayMessage(productId);
+
+      let cartQuantity = 0;
+
+      cart.forEach((item) => {
+        cartQuantity += item.quantity;
+      });
+
+      document.querySelector(".js-cart-quantity").innerHTML = cartQuantity;
+    });
+  });
+}
